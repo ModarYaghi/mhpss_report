@@ -1,0 +1,11 @@
+{
+	"configurations": [
+		{
+			"type": "python-tests",
+			"name": "Python-tests configuration",
+			"testFramework": "",
+			"targets": [],
+		},
+		
+	]
+}

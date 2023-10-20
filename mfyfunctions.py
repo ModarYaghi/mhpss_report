@@ -49,7 +49,7 @@ def read_encrypted_excels(
     for file, password in password_dict.items():
         file_path = os.path.join(directory, file)
 
-        # Check if file exists
+        # Check if the file exists
         if not os.path.exists(file_path):
             print(f"Error: File {file_path} does not exist. Skipping...")
             continue
@@ -98,9 +98,9 @@ def intake_validate(nt1, nt2, nt3, ntre):
         These date entries indicate different sessions or stages in service provision.
     Parameters:
         nt1: First date (string or datetime-like object). The start date of the service.
-        nt2: Second date (string or datetime-like object). The completion date of the initial service.
-        nt3: Third date (string or datetime-like object). The date of a follow-up or additional session if applicable.
-        ntre: Fourth date (string or datetime-like object).
+        nt2: Second date (string or datetime-like objects). The completion date of the initial service.
+        nt3: Third date (string or datetime-like objects). The date of a follow-up or additional session if applicable.
+        ntre: Fourth date (string or datetime-like objects).
             The date of a repeated or additional service session if applicable.
 
     Returns:
@@ -108,9 +108,9 @@ def intake_validate(nt1, nt2, nt3, ntre):
 
     Encoding Scheme:
         -1: Service Started but Not Completed. Only D1 is provided.
-        1: Valid Service. D1 and D2 are provided, with D2 > D1.
-        2: Three Session Service. D1, D2, and D3 are provided, with D3 > D2 > D1.
-        3: Repeated Service. D1, D2, and D4 are provided, with D4 > D2 > D1, and if D3 is provided, D4 > D3.
+        1: Valid Service. D1 and D2 are provided with D2 > D1.
+        2: Three Session Service. D1, D2, and D3 are provided with D3 > D2 > D1.
+        3: Repeated Service. D1, D2, and D4 are provided with D4 > D2 > D1, and if D3 is provided, D4 > D3.
         0: Data Entry Error. Any other combinations or date arrangements that do not adhere to the above criteria,
         indicating possible data entry issues.
     """
@@ -182,12 +182,12 @@ def create_binary_pattern(
                                      Default is ''.join, which concatenates the binary strings.
 
     Returns:
-    - pd.Series: A Pandas Series containing the binary sequence for each row in the input DataFrame.
+    - pd.Series: A Pandas' Series containing the binary sequence for each row in the input DataFrame.
 
     Example:
     # >>> df = pd.DataFrame({
-    # ...     'date1': ['2021-01-01', np.nan, '2021-01-03'],
-    # ...     'date2': ['2021-01-02', '2021-01-02', np.nan],
+    # ...     'date1': ['2021-01-01', np. nan, '2021-01-03'],
+    # ...     'date2': ['2021-01-02', '2021-01-02', np. nan],
     # ...     'date3': ['2021-01-03', '2021-01-03', '2021-01-01']
     # ... })
     # >>> df['binary_seq'] = create_binary_pattern(df, 'date1', 'date3')
@@ -211,7 +211,7 @@ def create_binary_pattern(
 
     column_subset = input_dataframe.iloc[:, start_idx:end_idx]
 
-    # Handle special conditions: return -1 if the first date is NaN and any subsequent dates are not NaN
+    # Handle special conditions: return -1 if the first date is NaN, and any subsequent dates are not NaN
     # or if the third date is present while the second one is not
     mask_invalid = (
                            column_subset.iloc[:, 0].isna() & column_subset.iloc[:, 1:].notna().any(axis=1)
@@ -239,17 +239,17 @@ def compare_date_columns(
         dataframe: DataFrame,
         first_column: str,
         second_column: str
-) -> ndarray[Any, dtype[Any]]:
+) -> ndarray:
     """
     Compare two date columns in a DataFrame and return a binary representation for their relationship.
 
     Parameters:
-        dataframe (DataFrame): The DataFrame containing the columns to compare.
-        first_column (str): The name of the first column to compare.
-        second_column (str): The name of the second column to compare.
+        :param dataframe: The DataFrame containing the columns to compare.
+        :param first_column: The name of the first column to compare.
+        :param second_column: The name of the second column to compare.
 
     Returns:
-        ndarray: A NumPy ndarray of shape (n,) where n is the number of rows in the dataframe.
+        ndarray: A NumPy ndarray of shape (n), where n is the number of rows in the dataframe.
                  Each element of the array is a string representing the binary relationship
                  between the corresponding dates in the input columns, according to the following code:
 
@@ -259,9 +259,10 @@ def compare_date_columns(
                      - '001': Second date is NaN, first date is not.
                      - '101': Dates are different and neither is NaN.
 
-                 The dtype of the returned ndarray is string. Note that operations on this
+                 The dtype of the returned ndarray is a string.
+                 Note that operations on this
                  ndarray will use NumPy functionality, and if Pandas functionality is desired,
-                 you may convert it to a Pandas Series object.
+                 you may convert it to a Pandas' Series object.
 
     Raises:
         ValueError: If the provided columns are not found in the DataFrame or are not datetime dtype.
@@ -351,7 +352,7 @@ def validate_records(df: pd.DataFrame,
     Parameters:
     - df (pd.DataFrame): The input dataframe.
     - key (str): The column name that acts as the unique identifier.
-    - date_columns (List[str]): A list of column names that represent session dates.
+    - Date_columns (List[str]): A list of column names that represent session dates.
 
     Returns:
     - pd.DataFrame: A dataframe with warnings or an empty dataframe if no issues are found.
@@ -383,7 +384,7 @@ def validate_records(df: pd.DataFrame,
     # Filter the original dataframe for these keys
     warnings_df = df[df[key].isin(all_warning_keys)].copy()
 
-    # Annotate with warning message
+    # Annotate with a warning message
     warnings_df['warning'] = np.where(warnings_df[key].isin(duplicate_sessions),
                                       'Multiple records for the same session type',
                                       f'More than {len(date_columns)} records')
@@ -397,13 +398,13 @@ def repeated_client_indicator(df: pd.DataFrame, client_id: str, service_index: s
 
    Usage:
     This function is mainly used in Group Counseling Data.
-    Indicating clients that participated in more than one group. Indicator is number of occurrences
-    with the groups' indices where the occurrences happened.
+    Indicating clients that participated in more than one group.
+    Indicator is the number of occurrences with the groups' indices where the occurrences happened.
 
     Parameters:
     - df (pd.DataFrame): The input DataFrame.
     - client_col (str): Name of the column containing client IDs.
-    - service_col (str): Name of the column containing service indices.
+    - Service_col (str): Name of the column containing service indices.
 
     Returns:
     pd.Series: A Series containing the generated indicator.
@@ -422,7 +423,7 @@ def repeated_client_indicator(df: pd.DataFrame, client_id: str, service_index: s
     if df[client_id].isna().any() or df[service_index].isna().any():
         raise ValueError("Columns used for indicator calculation should not contain NaN values.")
 
-    # Count the number of occurrences of each client_id
+    # Count the number of occurrences regarding each client_id
     df['id_count'] = df.groupby(client_id)[client_id].transform('count')
 
     # Generate a string with the other service indices
@@ -444,7 +445,7 @@ def repeated_client_indicator(df: pd.DataFrame, client_id: str, service_index: s
 def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False):
     """
     This function processes the given dataframe by performing the following steps:
-    1. Validate input and convert date columns to datetime type.
+    1. Validate input and convert date columns to a datetime type.
     2. Melt the dataframe to transform date columns into a single column 'scdate'.
     3. Drop rows with NaT values in the 'scdate' column.
     4. Ensure 'sctype' is the 5th column and 'scdate' is the 6th column in the resulting dataframe.
@@ -453,8 +454,9 @@ def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False):
 
     Parameters:
     input_df (pd.DataFrame): The input dataframe.
-    date_columns (list): A list of date column names to process.
-    sort_by_date (bool, optional): Whether to sort the resulting dataframe by the 'scdate' column. Defaults to False.
+    Date_columns (list): A list of date column names to process.
+    Sort_by_date (bool, optional): Whether to sort the resulting dataframe by the 'scdate' column.
+    Defaults to False.
 
     Returns:
     pd.DataFrame: The processed dataframe.
@@ -492,6 +494,8 @@ def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False):
         melted_df.reset_index(drop=True, inplace=True)
 
     return melted_df
+
+
 
 
 if __name__ == "__main__":
