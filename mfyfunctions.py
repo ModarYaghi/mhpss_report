@@ -442,7 +442,7 @@ def repeated_client_indicator(df: pd.DataFrame, client_id: str, service_index: s
     return df['indicator']
 
 
-def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False):
+def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False, var_name='sctype', value_name='scdate', var_position=5, value_position=6):
     """
     This function processes the given dataframe by performing the following steps:
     1. Validate input and convert date columns to a datetime type.
@@ -455,8 +455,11 @@ def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False):
     Parameters:
     input_df (pd.DataFrame): The input dataframe.
     Date_columns (list): A list of date column names to process.
-    Sort_by_date (bool, optional): Whether to sort the resulting dataframe by the 'scdate' column.
-    Defaults to False.
+    Sort_by_date (bool, optional): Whether to sort the resulting dataframe by the 'scdate' column. Defaults to False.
+    Var_name (str, optional): The name of the variable column. Defaults to 'sctype'.
+    Value_name (str, optional): The name of the value column. Defaults to 'scdate'.
+    Var_position (int, optional): The position of the variable column. Defaults to 5.
+    Value_position (int, optional): The position of the value column. Defaults to 6.
 
     Returns:
     pd.DataFrame: The processed dataframe.
@@ -475,27 +478,25 @@ def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False):
 
     # Melt the dataframe to transform date columns into a single column 'scdate'.
     melted_df = pd.melt(input_df, id_vars=[col for col in input_df.columns if col not in date_columns],
-                        value_vars=date_columns, var_name='sctype', value_name='scdate')
+                        value_vars=date_columns, var_name=var_name, value_name=value_name)
 
     # Drop rows with NaT values in the 'scdate' column
-    melted_df.dropna(subset=['scdate'], inplace=True)
+    melted_df.dropna(subset=[value_name], inplace=True)
 
-    # Ensure 'sctype' is the 5th column and 'scdate' is the 6th column in the resulting dataframe
+    # Ensure 'sctype' is the var_position column and 'scdate' is the value_position column in the resulting dataframe
     columns = list(melted_df.columns)
-    sctype_index = columns.index('sctype')
-    scdate_index = columns.index('scdate')
-    columns.insert(6, columns.pop(sctype_index))  # 6th column
-    columns.insert(7, columns.pop(scdate_index))  # 7th column
+    var_index = columns.index(var_name)
+    value_index = columns.index(value_name)
+    columns.insert(var_position, columns.pop(var_index))  # var_position column
+    columns.insert(value_position, columns.pop(value_index))  # value_position column
     melted_df = melted_df[columns]
 
     # Optionally sort the resulting dataframe by the 'scdate' column.
     if sort_by_date:
-        melted_df.sort_values(by='scdate', inplace=True)
+        melted_df.sort_values(by=value_name, inplace=True)
         melted_df.reset_index(drop=True, inplace=True)
 
     return melted_df
-
-
 
 
 if __name__ == "__main__":
