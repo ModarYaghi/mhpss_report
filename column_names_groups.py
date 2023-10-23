@@ -514,7 +514,6 @@ aw_basic_columns = [
 ]
 
 aw_date_columns = [
-    'awci',
     'aws'
 ]
 
