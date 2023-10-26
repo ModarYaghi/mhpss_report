@@ -59,19 +59,7 @@ screening_basic_int_columns = [
     'age'
 ]
 
-screening_all_int_columns = [
-    'scspi',
-    'age',
-    'sex',
-    'mhpss',
-    'trw',
-    'outref',
-    'tmh',
-    'pei',
-    'sert'
-]
-
-screening_numerical_variables = [
+screening_num_variables = [
     'scspi',
     'sex',
     'age',
@@ -141,7 +129,7 @@ victimhood = [
     'other'
 ]
 
-intake_numerical_variables = [
+intake_num_variables = [
     'ntspi',
     'fcid',
     'nt',
