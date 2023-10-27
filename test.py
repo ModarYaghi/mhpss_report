@@ -3,62 +3,6 @@ import plotly.graph_objects as go
 from plotly.offline import plot
 import plotly.io as pio
 
-
-# def format_quarter(date):
-#     quarter = (date.month - 1) // 3 + 1
-#     return f"{date.year}-Q{quarter}"
-#
-#
-# visits23csv = pd.read_csv('visits23.csv')
-# # Plot
-# freq_df = visits23csv['date'].value_counts().reset_index()
-# freq_df.columns = ['Date', 'Frequency']
-#
-# freq_df = freq_df.sort_values('Date')
-#
-# line_plot = go.Figure(
-#     data=go.Scatter(
-#         x=freq_df['Date'],
-#         y=freq_df['Frequency'],
-#         mode='lines',
-#         marker=dict(color='blue')
-#     )
-# )
-#
-# # Convert to datetime objects
-# start_date = pd.to_datetime(freq_df['Date'].min())
-# end_date = pd.to_datetime(freq_df['Date'].max())
-#
-# # Adding start and end date points to tickvals and ticktext
-# quarter_dates = pd.date_range(start=start_date, end=end_date, freq='Q')
-#
-# tickvals = [start_date] + list(quarter_dates) + [end_date]
-# ticktext = [start_date.strftime('%Y-%m-%d')] + [format_quarter(d) for d in quarter_dates] + [end_date.strftime('%Y-%m-%d')]
-#
-# line_plot.update_layout(
-#     title='Frequency Plot',
-#     xaxis_title='Date',
-#     yaxis_title='Frequency',
-#     xaxis=dict(
-#         tickmode='array',
-#         tickvals=tickvals,
-#         ticktext=ticktext,
-#         title_font=dict(color='black'),
-#         tickfont=dict(color='black'),
-#     ),
-#     yaxis=dict(
-#         title_font=dict(color='black'),
-#         tickfont=dict(color='black'),
-#     ),
-#     plot_bgcolor='white',
-#     paper_bgcolor='white',
-#     font=dict(color='black'),
-# )
-#
-# # Save plot as PNG
-# pio.write_image(line_plot, 'plot.png')
-
-
 # class PlotTemplate:
 #     def __init__(self, plot_type='scatter', title='My Plot', title_color='black',
 #                  font_size=18, bg_color='white', bg_opacity=0.1, filename='plot.png',
@@ -159,74 +103,40 @@ if __name__ == "__main__":
 
 
 def format_quarter(date):
-    quarter = (date.month - 1) // 3 + 1
-    return f"{date.year}-Q{quarter}"
+    q = (date.month - 1) // 3 + 1
+    return f"{date.year}-Q{q}"
 
 
-visits23csv = pd.read_csv('visits23.csv')
-# Plot
-freq_df = visits23csv['date'].value_counts().reset_index()
-freq_df.columns = ['Date', 'Frequency']
+df = pd.read_csv('visits23.csv')
+df['date'] = pd.to_datetime(df['date'])
+df = df['date'].value_counts().reset_index()
+df.columns = ['Date', 'Frequency']
+df.sort_values('Date', inplace=True)
 
-freq_df = freq_df.sort_values('Date')
+start_date = df['Date'].min().strftime('%Y-%m-%d')
+end_date = df['Date'].max().strftime('%Y-%m-%d')
+quarters = pd.date_range(start=start_date, end=end_date, freq='Q')
+tickvals = [start_date] + [d.strftime('%Y-%m-%d') for d in quarters] + [end_date]
+ticktext = [start_date] + [format_quarter(d) for d in quarters] + [end_date]
 
-# Convert dates to strings
-freq_df['Date'] = freq_df['Date'].astype(str)
-
-# Convert to datetime objects
-start_date = pd.to_datetime(freq_df['Date'].min())
-end_date = pd.to_datetime(freq_df['Date'].max())
-
-# Adding start and end date points to tickvals and ticktext
-quarter_dates = pd.date_range(start=start_date, end=end_date, freq='Q')
-
-tickvals = [start_date.strftime('%Y-%m-%d')] + [d.strftime('%Y-%m-%d') for d in quarter_dates] + [end_date.strftime('%Y-%m-%d')]
-ticktext = [start_date.strftime('%Y-%m-%d')] + [format_quarter(d) for d in quarter_dates] + [end_date.strftime('%Y-%m-%d')]
-
-line_plot = go.Figure(
-    data=go.Scatter(
-        x=freq_df['Date'],
-        y=freq_df['Frequency'],
-        mode='lines',
-        marker=dict(color='blue')
-    )
-)
-
-line_plot.update_layout(
-    title='Frequency Plot',
-    title_font=dict(
-        size=24,  # Font size
-        color='black',
-        family='Arial, sans-serif',
-        weight='bold',  # Font weight
-    ),
+fig = go.Figure(data=go.Scatter(x=df['Date'].dt.strftime('%Y-%m-%d'), y=df['Frequency'], mode='lines'))
+fig.update_layout(
+    title='Visit Frequency Over Time',
+    title_font=dict(size=24),
     xaxis_title='Date',
     yaxis_title='Frequency',
     xaxis=dict(
-        visible=True,
-        range=[start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')],
+        range=[start_date, end_date],
         tickmode='array',
         tickvals=tickvals,
         ticktext=ticktext,
-        title_font=dict(color='black'),
-        tickfont=dict(color='black'),
         showline=True,
-        linewidth=2,
-        linecolor='black'
+        linewidth=2
     ),
-    yaxis=dict(
-        title_font=dict(color='black'),
-        tickfont=dict(color='black'),
-        showgrid=True,  # Show horizontal grid lines
-        gridwidth=1,  # Width of grid lines
-        gridcolor='lightgrey',  # Color of grid line
-    ),
+    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgrey'),
     plot_bgcolor='white',
     paper_bgcolor='white',
-    font=dict(color='black'),
+    font=dict(color='black')
 )
 
-# Show plot
-plot(line_plot, filename='plot.html')
-
-#%%
+plot(fig, filename='plot.html')

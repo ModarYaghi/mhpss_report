@@ -115,7 +115,28 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\011\datasets\visits.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\soti_221001230930\screening_221001230930.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\visit.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\visits23.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
