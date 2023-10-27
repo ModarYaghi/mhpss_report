@@ -570,7 +570,6 @@ ptnt_basic_columns = [
 ptnt_date_columns = [
     'ptnt1',
     'ptnt2',
-    'ptntre'
 ]
 
 ptnt_int_columns = [

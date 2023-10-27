@@ -8,6 +8,15 @@ from pandas import DataFrame, Series
 from typing import Any, Dict, Callable, List, Optional, Union
 
 
+def get_column_index(df, primary_column, secondary_column):
+    if primary_column in df.columns:
+        return df.columns.get_loc(primary_column)
+    elif secondary_column in df.columns:
+        return df.columns.get_loc(secondary_column)
+    else:
+        return -1  # Return -1 if neither column exists
+
+
 def read_encrypted_excels(
         directory: str,
         password_dict: Dict[str, str]
@@ -442,7 +451,7 @@ def repeated_client_indicator(df: pd.DataFrame, client_id: str, service_index: s
     return df['indicator']
 
 
-def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False, var_name='sctype', value_name='scdate', var_position=5, value_position=6):
+def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False, var_name='', value_name=''):
     """
     This function processes the given dataframe by performing the following steps:
     1. Validate input and convert date columns to a datetime type.
@@ -487,8 +496,10 @@ def melt_and_categorize_dates(input_df, date_columns, sort_by_date=False, var_na
     columns = list(melted_df.columns)
     var_index = columns.index(var_name)
     value_index = columns.index(value_name)
-    columns.insert(var_position, columns.pop(var_index))  # var_position column
-    columns.insert(value_position, columns.pop(value_index))  # value_position column
+    position1 = get_column_index(melted_df, 'fcid', 'rid') + 1
+    position2 = position1 + 1
+    columns.insert(position1, columns.pop(var_index))  # var_position column
+    columns.insert(position2, columns.pop(value_index))  # value_position column
     melted_df = melted_df[columns]
 
     # Optionally sort the resulting dataframe by the 'scdate' column.
