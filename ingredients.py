@@ -9,6 +9,25 @@ tt_passwords = {
     'tt_pt_HR_v04.xlsx': 'Hind002'
 }
 
+datasets_names = {
+    '0000_ps_sc_092310.csv': 'scr',
+    '0001_ps_nt_092310.csv': 'int',
+    '0010_ps_gc_092310.csv': 'gc',
+    '0011_ps_ic_092310.csv': 'ic',
+    '0100_ps_fu_092310.csv': 'fu',
+    '0101_ps_pe_092310.csv': 'pei',
+    '0110_ps_tr_092310.csv': 'trw',
+    '0111_ps_td_092310.csv': 'td',
+    '1000_ps_cw_092310.csv': 'cws',
+    '1001_ps_aw_092310.csv': 'aws',
+    '1010_pt_pf_092310.csv': 'psfs',
+    '1011_pt_nt_092310.csv': 'ptnt',
+    '1100_pt_re_092310.csv': 'ptre',
+    '1101_pt_gc_092310.csv': 'ptgc',
+    '1110_pt_ic_092310.csv': 'ptic',
+    '1111_pt_fu_092310.csv': 'ptfu',
+}
+
 screening_columns = [
     'scspi',
     'rid',
